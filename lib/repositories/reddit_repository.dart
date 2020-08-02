@@ -10,13 +10,9 @@ Future<String> searchSubreddits(String query, [String after]) async {
     url = "$url?after=$after";
   }
 
-  print(url);
-
   final response = await http.get(url);
 
   if (response.statusCode == 200) {
-    // Use the compute function to run parsePhotos in a separate isolate.
-    // return compute(parsePosts, response.body);
     return response.body;
   } else {
     throw Exception('Failed to fetch subreddit.');

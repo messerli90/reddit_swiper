@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:reddit_pics/models/Post.dart';
 import 'package:reddit_pics/repositories/reddit_repository.dart';
 import 'package:reddit_pics/widgets/post_list.dart';
 
 class ResultPage extends StatefulWidget {
-  ResultPage({Key key, this.query}) : super(key: key);
-
   final String query;
+
+  ResultPage({Key key, this.query}) : super(key: key);
 
   @override
   _ResultPageState createState() => _ResultPageState();

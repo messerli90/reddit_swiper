@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:reddit_pics/models/Post.dart';
@@ -68,8 +69,13 @@ class _PostsListState extends State<PostsList> {
                   MaterialPageRoute(
                     fullscreenDialog: true,
                     builder: (context) => Container(
-                      child: PhotoView(
-                        imageProvider: NetworkImage(widget.posts[index].url),
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: PhotoView(
+                            imageProvider: CachedNetworkImageProvider(
+                                widget.posts[index].url)
+                            // imageProvider: NetworkImage(widget.posts[index].url),
+                            ),
                       ),
                     ),
                   ));
