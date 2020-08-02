@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit_pics/models/Post.dart';
 import 'package:reddit_pics/repositories/reddit_repository.dart';
+import 'package:reddit_pics/widgets/post_screen.dart';
 
 class ResultScreen extends StatefulWidget {
   final String subreddit;
@@ -59,6 +58,15 @@ class _ResultScreenState extends State<ResultScreen> {
     });
   }
 
+  void _postClicked(Post post) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PostScreen(posts, posts.indexOf(post)),
+      ),
+    );
+  }
+
   Widget _resultsGrid(String data) {
     return GridView.count(
       controller: _scrollController..addListener(_scrollListener),
@@ -75,9 +83,15 @@ class _ResultScreenState extends State<ResultScreen> {
 
   Widget _resultCell(Post post) {
     return Container(
-      child: CachedNetworkImage(
-        imageUrl: post.thumbnailUrl,
-        fit: BoxFit.cover,
+      child: GestureDetector(
+        onTap: () {
+          print("tapped: ${post.id}");
+          _postClicked(post);
+        },
+        child: CachedNetworkImage(
+          imageUrl: post.thumbnailUrl,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
