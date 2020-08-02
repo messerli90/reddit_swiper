@@ -10,6 +10,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Reddit Images',
         theme: ThemeData(
           primarySwatch: Colors.blueGrey,

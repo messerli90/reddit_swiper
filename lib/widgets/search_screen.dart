@@ -41,7 +41,15 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: null,
+      appBar: AppBar(
+        title: Text('Reddit Swiper'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings_outlined),
+            onPressed: () => print('pressed'),
+          )
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Center(
