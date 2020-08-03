@@ -209,13 +209,12 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Column(
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                padding: const EdgeInsets.only(top: 32, left: 16, right: 16),
                 child: _header(),
               ),
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                 child: _searchField(),
               ),
               Container(
