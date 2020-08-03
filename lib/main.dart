@@ -13,6 +13,11 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Reddit Images',
         theme: ThemeData(
+          appBarTheme: AppBarTheme(
+            color: Colors.blueGrey[900],
+            brightness: Brightness.dark,
+          ),
+          accentColor: Colors.blueAccent,
           primarySwatch: Colors.blueGrey,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
