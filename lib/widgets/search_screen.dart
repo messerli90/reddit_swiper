@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:random_color/random_color.dart';
 import 'package:reddit_pics/widgets/result_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,16 +11,28 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   TextEditingController _searchFieldController;
   List<String> history = [];
+  List<Color> colors = [];
 
   @override
   void initState() {
     super.initState();
     _searchFieldController = TextEditingController();
+    colors = _createColors();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  List<Color> _createColors() {
+    List<Color> _colors = List<Color>();
+    RandomColor _randomColor = RandomColor();
+    for (var i = 0; i < 20; i++) {
+      _colors.add(_randomColor.randomColor(
+          colorSaturation: ColorSaturation.highSaturation));
+    }
+    return _colors;
   }
 
   Future<List<String>> _fetchHistory() async {
@@ -52,13 +65,15 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
-  Widget _historyButton(String item) => FlatButton(
-        color: Colors.red[600],
-        textColor: Colors.white,
-        onPressed: () => _searchFieldSubmitted(item),
-        onLongPress: () => _removeFromHistory(item),
-        child: Text(item),
-      );
+  Widget _buildHistoryButton(String item, int i) {
+    return FlatButton(
+      color: colors[i],
+      textColor: Colors.white,
+      onPressed: () => _searchFieldSubmitted(item),
+      onLongPress: () => _removeFromHistory(item),
+      child: Text(item),
+    );
+  }
 
   Widget _getHistoryWidgets() {
     return FutureBuilder(
@@ -68,12 +83,12 @@ class _SearchScreenState extends State<SearchScreen> {
           List<Widget> _buttons = new List<Widget>();
           for (var i = 0; i < snapshot.data.length; i++) {
             _buttons.add(
-              _historyButton(snapshot.data[i]),
+              _buildHistoryButton(snapshot.data[i], i),
             );
           }
           return Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            alignment: WrapAlignment.spaceAround,
+            crossAxisAlignment: WrapCrossAlignment.start,
+            alignment: WrapAlignment.start,
             spacing: 8.0,
             children: _buttons,
           );
@@ -86,24 +101,32 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _historySection() => Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(
+  Widget _historySection() => Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
               'History',
-              style: Theme.of(context).textTheme.headline5,
+              style: TextStyle(
+                color: Colors.teal[900],
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12.0),
-            child: Text(
+            SizedBox(height: 12),
+            _getHistoryWidgets(),
+            SizedBox(height: 12),
+            Text(
               'Long press to remove from history',
-              style: Theme.of(context).textTheme.caption,
+              style: TextStyle(
+                  color: Colors.teal[500],
+                  fontSize: 12,
+                  fontWeight: FontWeight.w300,
+                  fontStyle: FontStyle.italic),
             ),
-          ),
-          _getHistoryWidgets(),
-        ],
+          ],
+        ),
       );
 
   void _searchFieldSubmitted(String value) async {
@@ -123,10 +146,28 @@ class _SearchScreenState extends State<SearchScreen> {
         autofocus: true,
         controller: _searchFieldController,
         onSubmitted: _searchFieldSubmitted,
-        // textInputAction: TextInputAction.go,
+        style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
-          border: OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.teal[200],
+              style: BorderStyle.solid,
+              width: 2,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            gapPadding: 2,
+          ),
           labelText: 'Subreddit to search',
+          labelStyle: TextStyle(color: Colors.teal[100]),
+          prefix: Padding(
+            padding: EdgeInsets.only(right: 4),
+            child: Text(
+              '/r/',
+              style: TextStyle(
+                color: Colors.teal[200],
+              ),
+            ),
+          ),
           suffixIcon: IconButton(
             onPressed: () => _searchFieldController.clear(),
             icon: Icon(Icons.clear),
@@ -134,23 +175,63 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       );
 
+  Widget _header() => Container(
+        child: Row(
+          children: [
+            Text(
+              'Reddit',
+              style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25.0),
+            ),
+            SizedBox(width: 8),
+            Text(
+              'Swiper',
+              style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  color: Colors.white,
+                  fontWeight: FontWeight.w300,
+                  fontSize: 25.0),
+            ),
+          ],
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Reddit Swiper'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings_outlined),
-            onPressed: () => print('pressed'),
-          )
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [_searchField(), _historySection()],
+      body: SafeArea(
+        child: Container(
+          color: Colors.teal[700],
+          // padding: EdgeInsets.all(32.0),
+          child: Column(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                child: _header(),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                child: _searchField(),
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 12),
+                width: MediaQuery.of(context).size.width - 12,
+                decoration: BoxDecoration(
+                  color: Colors.teal[100],
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(64),
+                    bottomRight: Radius.circular(64),
+                  ),
+                ),
+                child: _historySection(),
+              ),
+            ],
+          ),
         ),
       ),
     );

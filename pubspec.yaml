@@ -33,6 +33,7 @@ dependencies:
   cached_network_image: ^2.2.0
   flutter_swiper: ^1.1.6
   shared_preferences: ^0.5.8
+  random_color: ^1.0.5
 
 dev_dependencies:
   flutter_test:
