@@ -23,9 +23,11 @@ class PostScreen extends StatelessWidget {
           CachedNetworkImage(imageUrl: posts[value + 1].url);
         },
         itemBuilder: (BuildContext context, int index) {
-          return PhotoView(
-            imageProvider: CachedNetworkImageProvider(posts[index].url),
-          );
+          return Hero(
+              tag: posts[index].id,
+              child: PhotoView(
+                imageProvider: CachedNetworkImageProvider(posts[index].url),
+              ));
         },
       ),
     );

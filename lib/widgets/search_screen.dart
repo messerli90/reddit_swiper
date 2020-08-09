@@ -23,6 +23,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void dispose() {
     super.dispose();
+    _searchFieldController.dispose();
   }
 
   List<Color> _createColors() {
@@ -202,6 +203,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(),
       body: SafeArea(
         child: Container(
           color: Colors.teal[700],

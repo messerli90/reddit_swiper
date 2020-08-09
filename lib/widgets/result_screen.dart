@@ -73,7 +73,7 @@ class _ResultScreenState extends State<ResultScreen> {
       padding: const EdgeInsets.all(2),
       crossAxisSpacing: 2,
       mainAxisSpacing: 2,
-      crossAxisCount: 2,
+      crossAxisCount: 3,
       children: List.generate(
         posts.length,
         (index) => _resultCell(posts[index]),
@@ -83,16 +83,21 @@ class _ResultScreenState extends State<ResultScreen> {
 
   Widget _resultCell(Post post) {
     return Container(
-      child: GestureDetector(
-        onTap: () {
-          print("tapped: ${post.id}");
-          _postClicked(post);
-        },
-        child: CachedNetworkImage(
-          imageUrl: post.thumbnailUrl,
-          fit: BoxFit.cover,
-        ),
-      ),
+      child: Hero(
+          tag: post.id,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                print("tapped: ${post.id}");
+                _postClicked(post);
+              },
+              child: CachedNetworkImage(
+                imageUrl: post.thumbnailUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+          )),
     );
   }
 

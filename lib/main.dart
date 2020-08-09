@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reddit_pics/widgets/search_screen.dart';
+import 'package:reddit_pics/screens/home_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
           ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: SearchScreen(),
+        // home: SearchScreen(),
+        home: HomeScreen(),
       );
 }
