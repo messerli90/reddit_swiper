@@ -1,23 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:reddit_pics/colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:reddit_pics/models/History.dart';
+import 'package:reddit_pics/models/Post.dart';
+import 'package:reddit_pics/repositories/history_repository.dart';
 import 'package:reddit_pics/repositories/popular_subreddits.dart';
+import 'package:reddit_pics/repositories/reddit_repository.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  TextEditingController _searchFieldController;
+  List<String> history = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _searchFieldController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _searchFieldController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar: AppBar(),
       body: Container(
-        width: MediaQuery.of(context).size.width,
-        color: background,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        color: Theme.of(context).backgroundColor,
+        child: ListView(
           children: [
-            SizedBox(
-              height: 25,
-            ),
             _buildSearch(),
             _buildHistory(),
             _buildPopular(),
@@ -26,6 +45,26 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+performSearch(String subreddit) async {
+  // perform search
+  String responseBody = await searchSubreddits(subreddit);
+
+  // print(responseBody);
+  List<Post> posts = parsePosts(responseBody);
+  String after = getAfterId(responseBody);
+
+  // Navigate to results page
+  // Navigator.of(context).push(route)
+
+  // add to history if there's results
+  History newHistory =
+      History(subreddit: subreddit, imgUrl: posts[0].thumbnailUrl);
+
+  insertHistory(newHistory);
+
+  // set state?
 }
 
 Widget _buildSearch() {
@@ -88,45 +127,73 @@ Widget _buildHistory() {
                 ),
               ),
             ),
-            Text(
-              'Clear history',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF718096),
+            TextButton(
+              onPressed: () {
+                deleteAll();
+                print('pressed');
+              },
+              child: Text(
+                'Clear history',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF718096),
+                ),
               ),
-            ),
+            )
           ],
         ),
         SizedBox(height: 16),
         Container(
           height: 150,
-          child: GridView.count(
-            crossAxisCount: 1,
-            mainAxisSpacing: 16,
-            scrollDirection: Axis.horizontal,
-            children: [
-              _buildHistoryCard(),
-              _buildHistoryCard(),
-              _buildHistoryCard(),
-              _buildHistoryCard(),
-            ],
-          ),
+          child: FutureBuilder(
+              future: getHistory(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data.length > 0) {
+                  return GridView.count(
+                    crossAxisCount: 1,
+                    mainAxisSpacing: 16,
+                    scrollDirection: Axis.horizontal,
+                    children: List.generate(
+                      snapshot.data.length,
+                      (i) => _buildHistoryCard(snapshot.data[i]),
+                    ),
+                  );
+                } else if (snapshot.hasData) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/images/dog_walking.svg',
+                          height: 100,
+                        ),
+                        Text(
+                          'History empty',
+                          style: TextStyle(
+                            color: Color(0xFF718096),
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                }
+                return Center(child: CircularProgressIndicator());
+              }),
         )
       ],
     ),
   );
 }
 
-Widget _buildHistoryCard() {
+Widget _buildHistoryCard(History history) {
+  print(history);
   return Container(
       constraints: BoxConstraints.expand(),
       decoration: BoxDecoration(
         image: DecorationImage(
           fit: BoxFit.cover,
-          image: NetworkImage(
-            'https://images.unsplash.com/photo-1596768526072-10ee5a7b9645?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=900&q=60',
-          ),
+          image: NetworkImage(history.imgUrl),
         ),
         borderRadius: BorderRadius.circular(10),
         // color: Colors.blue,
@@ -152,7 +219,7 @@ Widget _buildHistoryCard() {
           child: Padding(
             padding: const EdgeInsets.all(6.0),
             child: Text(
-              '/r/cars',
+              '/r/${history.subreddit}',
               style: TextStyle(color: Color(0xFFEDF2F7)),
             ),
           ),
@@ -202,18 +269,21 @@ List<Widget> _buildPopularButtons() {
           text: s['text'],
           bgColor: Color(s['bgColor']),
           textColor: Color(s['textColor']),
+          subreddit: s['subreddit'],
         ),
       )
       .toList();
 }
 
-Widget _buildPopularButton({text, bgColor, textColor}) {
+Widget _buildPopularButton({text, bgColor, textColor, subreddit}) {
   return RaisedButton(
     elevation: 4,
     textColor: textColor,
     color: bgColor,
     child: Text(text),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-    onPressed: () {},
+    onPressed: () {
+      performSearch(subreddit);
+    },
   );
 }

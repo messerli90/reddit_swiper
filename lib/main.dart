@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:reddit_pics/screens/home_screen.dart';
+import 'package:reddit_pics/theme.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(MyApp());
 }
 
@@ -12,16 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) => MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Reddit Images',
-        theme: ThemeData(
-          primarySwatch: Colors.teal,
-          accentColor: Colors.tealAccent,
-          appBarTheme: AppBarTheme(
-            color: Colors.teal,
-            brightness: Brightness.light,
-          ),
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        // home: SearchScreen(),
+        theme: darkTheme,
         home: HomeScreen(),
       );
 }
