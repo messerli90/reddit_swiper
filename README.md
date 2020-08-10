@@ -1,16 +1,11 @@
-# reddit_pics
+# Reddit Swiper
 
-A new Flutter project.
+With Reddit Swiper you can browse all of your favorite image heavy subreddits. Recent subreddits will be saved to your local history which can easily be cleared for private browsing.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This app is developed using [Flutter](https://flutter.dev/)
 
-A few resources to get you started if this is your first Flutter project:
+#### 🚧 Disclaimer
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+I am using this project to learn more about mobile app development using Flutter, so please excuse any bad practices ✌️
