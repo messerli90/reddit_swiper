@@ -7,14 +7,19 @@ import 'package:sqflite/sqflite.dart';
 Future<Database> getDatabase() async {
   return openDatabase(
     // Set the path to the database.
-    join(await getDatabasesPath(), 'doggie_database.db'),
+    join(await getDatabasesPath(), 'history_database.db'),
+
     // When the database is first created, create a table to store dogs.
     onCreate: (db, version) {
       // Run the CREATE TABLE statement on the database.
       return db.execute(
-        "CREATE TABLE history(id INTEGER PRIMARY KEY, subreddit TEXT, img_url INTEGER)",
+        "CREATE TABLE history(id INTEGER PRIMARY KEY, subreddit TEXT, img_url INTEGER, created_at TEXT)",
       );
     },
+    // onUpgrade: (db, oldVersion, newVersion) {
+    //   print(oldVersion);
+    //   db.execute("DROP TABLE IF EXISTS history");
+    // },
     // Set the version. This executes the onCreate function and provides a
     // path to perform database upgrades and downgrades.
     version: 1,
@@ -24,8 +29,10 @@ Future<Database> getDatabase() async {
 Future<void> insertHistory(History history) async {
   final Database db = await getDatabase();
 
+  String now = new DateTime.now().toIso8601String();
+  history.updateTimestamp(now);
   var existing = await db.query('history',
-      where: 'subreddit = ?', whereArgs: ['aww'], limit: 1);
+      where: 'subreddit = ?', whereArgs: [history.subreddit], limit: 1);
 
   if (existing.length > 0) {
     // update
@@ -42,7 +49,8 @@ Future<List<History>> getHistory() async {
   final Database db = await getDatabase();
 
   // Query the table for all The Dogs.
-  final List<Map<String, dynamic>> maps = await db.query('history');
+  final List<Map<String, dynamic>> maps =
+      await db.query('history', orderBy: 'created_at DESC');
 
   // Convert the List<Map<String, dynamic> into a List<Dog>.
   return List.generate(maps.length, (i) {

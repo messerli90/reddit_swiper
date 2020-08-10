@@ -4,30 +4,23 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:reddit_pics/models/Post.dart';
 
-class PostScreen extends StatelessWidget {
+class GalleryScreen extends StatelessWidget {
+  final int initialIndex;
   final List<Post> posts;
-  final initialIndex;
-
-  PostScreen(this.posts, [this.initialIndex]);
+  const GalleryScreen({Key key, this.initialIndex, this.posts})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Swiper'),
         backgroundColor: Theme.of(context).backgroundColor,
       ),
-      body: Swiper(
+      body: new Swiper(
         itemCount: posts.length,
-        index: initialIndex ?? 0,
-        onIndexChanged: (value) {
-          CachedNetworkImage(
-            imageUrl: posts[value + 1].url,
-          );
-        },
-        itemBuilder: (BuildContext context, int index) {
-          return Hero(
-            tag: posts[index].id,
+        index: initialIndex,
+        itemBuilder: (context, index) {
+          return Container(
             child: PhotoView(
               imageProvider: CachedNetworkImageProvider(posts[index].url),
             ),

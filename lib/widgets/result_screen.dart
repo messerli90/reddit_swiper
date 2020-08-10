@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit_pics/models/History.dart';
 import 'package:reddit_pics/models/Post.dart';
+import 'package:reddit_pics/repositories/history_repository.dart';
 import 'package:reddit_pics/repositories/reddit_repository.dart';
 import 'package:reddit_pics/widgets/post_screen.dart';
 
@@ -23,12 +25,19 @@ class _ResultScreenState extends State<ResultScreen> {
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
     futureSearchResponse = searchSubreddits(widget.subreddit).then((value) {
       after = getAfterId(value);
       posts = parsePosts(value);
+      if (posts.length > 0) {
+        // add to history if there's results
+        History newHistory =
+            History(subreddit: widget.subreddit, imgUrl: posts[0].thumbnailUrl);
+
+        insertHistory(newHistory);
+      }
       return value;
     });
-    _scrollController = ScrollController();
   }
 
   @override
