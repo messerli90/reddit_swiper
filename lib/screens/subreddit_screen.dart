@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:reddit_pics/models/History.dart';
 import 'package:reddit_pics/models/Post.dart';
 import 'package:reddit_pics/repositories/history_repository.dart';
@@ -85,6 +86,28 @@ class _SubredditScreenState extends State<SubredditScreen> {
     );
   }
 
+  Widget _buildLoader() => Center(
+        child: Container(
+          height: 300,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              SvgPicture.asset(
+                'assets/images/imagination.svg',
+                height: 100,
+              ),
+              Text(
+                'Grabbing pictures',
+                style: TextStyle(
+                  color: Color(0xFF718096),
+                ),
+              ),
+              CircularProgressIndicator()
+            ],
+          ),
+        ),
+      );
+
   Widget _buildResults() {
     return FutureBuilder(
       future: postsFuture,
@@ -92,11 +115,7 @@ class _SubredditScreenState extends State<SubredditScreen> {
         if (snapshot.hasData) {
           return _buildGallery(snapshot);
         }
-        return Container(
-          child: Center(
-            child: Text('Loading'),
-          ),
-        );
+        return _buildLoader();
       },
     );
   }
